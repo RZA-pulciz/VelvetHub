@@ -35,11 +35,12 @@ jobs:
         run: pnpm build:pages
         env:
           VITE_BASE_PATH: /VelvetHub/
-          VITE_API_BASE_URL: ${{ vars.VITE_API_BASE_URL }}
-          VITE_OAUTH_PORTAL_URL: ${{ vars.VITE_OAUTH_PORTAL_URL }}
-          VITE_APP_ID: ${{ vars.VITE_APP_ID }}
-          VITE_ANALYTICS_ENDPOINT: ${{ vars.VITE_ANALYTICS_ENDPOINT }}
-          VITE_ANALYTICS_WEBSITE_ID: ${{ vars.VITE_ANALYTICS_WEBSITE_ID }}
+          # These values are public in a Vite bundle; support either UI section.
+          VITE_API_BASE_URL: ${{ vars.VITE_API_BASE_URL || secrets.VITE_API_BASE_URL }}
+          VITE_OAUTH_PORTAL_URL: ${{ vars.VITE_OAUTH_PORTAL_URL || secrets.VITE_OAUTH_PORTAL_URL }}
+          VITE_APP_ID: ${{ vars.VITE_APP_ID || secrets.VITE_APP_ID }}
+          VITE_ANALYTICS_ENDPOINT: ${{ vars.VITE_ANALYTICS_ENDPOINT || secrets.VITE_ANALYTICS_ENDPOINT }}
+          VITE_ANALYTICS_WEBSITE_ID: ${{ vars.VITE_ANALYTICS_WEBSITE_ID || secrets.VITE_ANALYTICS_WEBSITE_ID }}
       - name: Add SPA fallback
         run: |
           cp dist/public/index.html dist/public/404.html
