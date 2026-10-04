@@ -5,11 +5,28 @@ export { COOKIE_NAME, ONE_YEAR_MS } from "@shared/const";
 export const getApiBaseUrl = () =>
   (import.meta.env.VITE_API_BASE_URL?.trim() ?? "").replace(/\/$/, "");
 export const getApiUrl = (path: string) => `${getApiBaseUrl()}${path}`;
-export const isOfflinePreview = !getApiBaseUrl();
+type RuntimePublicConfig = {
+  appId?: string;
+  oauthPortalUrl?: string;
+};
+
+let runtimePublicConfig: RuntimePublicConfig = {};
+export const setRuntimePublicConfig = (config: RuntimePublicConfig) => {
+  runtimePublicConfig = config;
+};
+export const isOfflinePreview =
+  import.meta.env.VITE_OFFLINE_PREVIEW === "true" ||
+  (typeof window !== "undefined" &&
+    window.location.hostname.endsWith("github.io") &&
+    !getApiBaseUrl());
 
 export const getLoginUrl = (type: "signIn" | "signUp" = "signIn") => {
-  const oauthPortalUrl = import.meta.env.VITE_OAUTH_PORTAL_URL;
-  const appId = import.meta.env.VITE_APP_ID;
+  const oauthPortalUrl =
+    runtimePublicConfig.oauthPortalUrl ?? import.meta.env.VITE_OAUTH_PORTAL_URL;
+  const appId = runtimePublicConfig.appId ?? import.meta.env.VITE_APP_ID;
+  if (!oauthPortalUrl || !appId) {
+    throw new Error("OAuth public configuration is not available");
+  }
   const apiOrigin = getApiBaseUrl() || window.location.origin;
   const redirectUri = `${apiOrigin}/api/oauth/callback`;
   const nonce = crypto.randomUUID();

@@ -5,7 +5,12 @@ import { httpBatchLink, TRPCClientError } from "@trpc/client";
 import { createRoot } from "react-dom/client";
 import superjson from "superjson";
 import App from "./App";
-import { getApiUrl, startLogin } from "./const";
+import {
+  getApiUrl,
+  isOfflinePreview,
+  setRuntimePublicConfig,
+  startLogin,
+} from "./const";
 import { CartProvider } from "./contexts/CartContext";
 import "./index.css";
 
@@ -86,12 +91,36 @@ const trpcClient = trpc.createClient({
   ],
 });
 
-createRoot(document.getElementById("root")!).render(
-  <trpc.Provider client={trpcClient} queryClient={queryClient}>
-    <QueryClientProvider client={queryClient}>
-      <CartProvider>
-        <App />
-      </CartProvider>
-    </QueryClientProvider>
-  </trpc.Provider>
-);
+async function loadRuntimePublicConfig() {
+  if (isOfflinePreview) return;
+  try {
+    const response = await fetch(getApiUrl("/api/public-config"), {
+      credentials: "include",
+    });
+    if (response.ok) {
+      setRuntimePublicConfig(
+        (await response.json()) as {
+          appId?: string;
+          oauthPortalUrl?: string;
+        }
+      );
+    }
+  } catch {
+    // The app remains usable for public routes if the optional config endpoint is unavailable.
+  }
+}
+
+async function bootstrap() {
+  await loadRuntimePublicConfig();
+  createRoot(document.getElementById("root")!).render(
+    <trpc.Provider client={trpcClient} queryClient={queryClient}>
+      <QueryClientProvider client={queryClient}>
+        <CartProvider>
+          <App />
+        </CartProvider>
+      </QueryClientProvider>
+    </trpc.Provider>
+  );
+}
+
+void bootstrap();
