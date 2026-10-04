@@ -1,6 +1,7 @@
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { Route, Switch } from "wouter";
+import { Route, Router as WouterRouter, Switch } from "wouter";
+import { useHashLocation } from "wouter/use-hash-location";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import { VelvetProvider } from "./contexts/VelvetContext";
@@ -30,7 +31,8 @@ function Protected({ children }: { children: React.ReactNode }) {
 
 function Router() {
   return (
-    <Switch>
+    <WouterRouter hook={useHashLocation}>
+      <Switch>
       <Route path="/" component={Home} />
       <Route path="/accesso" component={AuthScreen} />
       <Route path="/safety" component={Safety} />
@@ -135,8 +137,9 @@ function Router() {
         )}
       </Route>
       <Route path="/404" component={NotFound} />
-      <Route component={NotFound} />
-    </Switch>
+        <Route component={NotFound} />
+      </Switch>
+    </WouterRouter>
   );
 }
 
