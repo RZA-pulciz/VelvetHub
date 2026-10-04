@@ -1,4 +1,4 @@
-import { startLogin } from "@/const";
+import { isOfflinePreview, startLogin } from "@/const";
 import { trpc } from "@/lib/trpc";
 import { TRPCClientError } from "@trpc/client";
 import { useCallback, useEffect, useMemo } from "react";
@@ -19,6 +19,7 @@ export function useAuth(options?: UseAuthOptions) {
   const meQuery = trpc.auth.me.useQuery(undefined, {
     retry: false,
     refetchOnWindowFocus: false,
+    enabled: !isOfflinePreview,
   });
 
   const logoutMutation = trpc.auth.logout.useMutation({
@@ -28,6 +29,10 @@ export function useAuth(options?: UseAuthOptions) {
   });
 
   const logout = useCallback(async () => {
+    if (isOfflinePreview) {
+      utils.auth.me.setData(undefined, null);
+      return;
+    }
     try {
       await logoutMutation.mutateAsync();
     } catch (error: unknown) {
@@ -50,16 +55,32 @@ export function useAuth(options?: UseAuthOptions) {
     }
   }, [logoutMutation, utils]);
 
+  const previewUser = isOfflinePreview
+    ? ({
+        id: 0,
+        openId: "offline-preview",
+        name: "Preview member",
+        email: null,
+        loginMethod: "preview",
+        role: "user",
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        lastSignedIn: new Date(),
+      } as NonNullable<typeof meQuery.data>)
+    : null;
+  const resolvedUser = meQuery.data ?? previewUser;
+
   const state = useMemo(() => {
     localStorage.setItem(
       "manus-runtime-user-info",
       JSON.stringify(meQuery.data)
     );
     return {
-      user: meQuery.data ?? null,
-      loading: meQuery.isLoading || logoutMutation.isPending,
+      user: resolvedUser,
+      loading:
+        (!isOfflinePreview && meQuery.isLoading) || logoutMutation.isPending,
       error: meQuery.error ?? logoutMutation.error ?? null,
-      isAuthenticated: Boolean(meQuery.data),
+      isAuthenticated: Boolean(resolvedUser),
     };
   }, [
     meQuery.data,
@@ -67,6 +88,7 @@ export function useAuth(options?: UseAuthOptions) {
     meQuery.isLoading,
     logoutMutation.error,
     logoutMutation.isPending,
+    resolvedUser,
   ]);
 
   useEffect(() => {

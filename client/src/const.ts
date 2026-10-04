@@ -5,6 +5,7 @@ export { COOKIE_NAME, ONE_YEAR_MS } from "@shared/const";
 export const getApiBaseUrl = () =>
   (import.meta.env.VITE_API_BASE_URL?.trim() ?? "").replace(/\/$/, "");
 export const getApiUrl = (path: string) => `${getApiBaseUrl()}${path}`;
+export const isOfflinePreview = !getApiBaseUrl();
 
 export const getLoginUrl = (type: "signIn" | "signUp" = "signIn") => {
   const oauthPortalUrl = import.meta.env.VITE_OAUTH_PORTAL_URL;

@@ -24,6 +24,7 @@ import { AuthScreen, MemberGate } from "./pages/Auth";
 import Policies from "./pages/Policies";
 import LiveHub from "./pages/LiveHub";
 import TrustRadar from "./pages/TrustRadar";
+import { isOfflinePreview } from "./const";
 
 function Protected({ children }: { children: React.ReactNode }) {
   return <MemberGate>{children}</MemberGate>;
@@ -33,110 +34,110 @@ function Router() {
   return (
     <WouterRouter hook={useHashLocation}>
       <Switch>
-      <Route path="/" component={Home} />
-      <Route path="/accesso" component={AuthScreen} />
-      <Route path="/safety" component={Safety} />
-      <Route path="/policy" component={Policies} />
-      <Route path="/live">
-        {() => (
-          <Protected>
-            <LiveHub />
-          </Protected>
-        )}
-      </Route>
-      <Route path="/live-preview" component={LiveHub} />
-      <Route path="/radar">
-        {() => (
-          <Protected>
-            <TrustRadar />
-          </Protected>
-        )}
-      </Route>
-      <Route path="/discover">
-        {() => (
-          <Protected>
-            <Discover />
-          </Protected>
-        )}
-      </Route>
-      <Route path="/studio">
-        {() => (
-          <Protected>
-            <Studio />
-          </Protected>
-        )}
-      </Route>
-      <Route path="/creator/:handle">
-        {() => (
-          <Protected>
-            <CreatorProfile />
-          </Protected>
-        )}
-      </Route>
-      <Route path="/inbox">
-        {() => (
-          <Protected>
-            <Inbox />
-          </Protected>
-        )}
-      </Route>
-      <Route path="/settings">
-        {() => (
-          <Protected>
-            <Settings />
-          </Protected>
-        )}
-      </Route>
-      <Route path="/admin">
-        {() => (
-          <Protected>
-            <Admin />
-          </Protected>
-        )}
-      </Route>
-      <Route path="/community">
-        {() => (
-          <Protected>
-            <Community />
-          </Protected>
-        )}
-      </Route>
-      <Route path="/earnings">
-        {() => (
-          <Protected>
-            <Earnings />
-          </Protected>
-        )}
-      </Route>
-      <Route path="/podcasts">
-        {() => (
-          <Protected>
-            <PodcastHub />
-          </Protected>
-        )}
-      </Route>
-      <Route path="/writing">
-        {() => (
-          <Protected>
-            <WritingHub />
-          </Protected>
-        )}
-      </Route>
-      <Route path="/rewards">
-        {() => (
-          <Protected>
-            <Rewards />
-          </Protected>
-        )}
-      </Route>
-      <Route path="/store">
-        {() => (
-          <Protected>
-            <Store />
-          </Protected>
-        )}
-      </Route>
-      <Route path="/404" component={NotFound} />
+        <Route path="/" component={Home} />
+        <Route path="/accesso" component={AuthScreen} />
+        <Route path="/safety" component={Safety} />
+        <Route path="/policy" component={Policies} />
+        <Route path="/live">
+          {() => (
+            <Protected>
+              <LiveHub />
+            </Protected>
+          )}
+        </Route>
+        <Route path="/live-preview" component={LiveHub} />
+        <Route path="/radar">
+          {() => (
+            <Protected>
+              <TrustRadar />
+            </Protected>
+          )}
+        </Route>
+        <Route path="/discover">
+          {() => (
+            <Protected>
+              <Discover />
+            </Protected>
+          )}
+        </Route>
+        <Route path="/studio">
+          {() => (
+            <Protected>
+              <Studio />
+            </Protected>
+          )}
+        </Route>
+        <Route path="/creator/:handle">
+          {() => (
+            <Protected>
+              <CreatorProfile />
+            </Protected>
+          )}
+        </Route>
+        <Route path="/inbox">
+          {() => (
+            <Protected>
+              <Inbox />
+            </Protected>
+          )}
+        </Route>
+        <Route path="/settings">
+          {() => (
+            <Protected>
+              <Settings />
+            </Protected>
+          )}
+        </Route>
+        <Route path="/admin">
+          {() => (
+            <Protected>
+              <Admin />
+            </Protected>
+          )}
+        </Route>
+        <Route path="/community">
+          {() => (
+            <Protected>
+              <Community />
+            </Protected>
+          )}
+        </Route>
+        <Route path="/earnings">
+          {() => (
+            <Protected>
+              <Earnings />
+            </Protected>
+          )}
+        </Route>
+        <Route path="/podcasts">
+          {() => (
+            <Protected>
+              <PodcastHub />
+            </Protected>
+          )}
+        </Route>
+        <Route path="/writing">
+          {() => (
+            <Protected>
+              <WritingHub />
+            </Protected>
+          )}
+        </Route>
+        <Route path="/rewards">
+          {() => (
+            <Protected>
+              <Rewards />
+            </Protected>
+          )}
+        </Route>
+        <Route path="/store">
+          {() => (
+            <Protected>
+              <Store />
+            </Protected>
+          )}
+        </Route>
+        <Route path="/404" component={NotFound} />
         <Route component={NotFound} />
       </Switch>
     </WouterRouter>
@@ -149,6 +150,12 @@ export default function App() {
       <ThemeProvider defaultTheme="dark">
         <VelvetProvider>
           <TooltipProvider>
+            {isOfflinePreview && (
+              <div className="border-b border-[#d7b46a]/30 bg-[#2b1c0b] px-4 py-2 text-center text-xs font-semibold text-[#f1d58f]">
+                Anteprima offline: le interazioni restano nel browser. Login,
+                messaggi e database si attiveranno collegando il backend HTTPS.
+              </div>
+            )}
             <Toaster theme="dark" />
             <Router />
           </TooltipProvider>
