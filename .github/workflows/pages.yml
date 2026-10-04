@@ -41,7 +41,16 @@ jobs:
           VITE_ANALYTICS_ENDPOINT: ${{ vars.VITE_ANALYTICS_ENDPOINT }}
           VITE_ANALYTICS_WEBSITE_ID: ${{ vars.VITE_ANALYTICS_WEBSITE_ID }}
       - name: Add SPA fallback
-        run: cp dist/public/index.html dist/public/404.html && touch dist/public/.nojekyll
+        run: |
+          cp dist/public/index.html dist/public/404.html
+          python3 - <<'PY'
+          from pathlib import Path
+          path = Path("dist/public/404.html")
+          html = path.read_text()
+          script = """<script>(function(){var base='/VelvetHub';var p=location.pathname.indexOf(base)===0?location.pathname.slice(base.length):location.pathname;if(p && p!=='/' && !p.endsWith('/404.html')){location.replace(base+'/#'+p+location.search)}})();</script>"""
+          path.write_text(html.replace('</body>', script + '</body>'))
+          PY
+          touch dist/public/.nojekyll
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
