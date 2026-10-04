@@ -1,0 +1,22 @@
+{
+  "routes": [
+    { "path": "/", "title": "Home" },
+    { "path": "/accesso", "title": "Accesso" },
+    { "path": "/safety", "title": "Sicurezza" },
+    { "path": "/policy", "title": "Policy" },
+    { "path": "/live", "title": "Live Hub" },
+    { "path": "/discover", "title": "Scopri" },
+    { "path": "/studio", "title": "Creator studio" },
+    { "path": "/creator/:handle", "title": "Creator profile" },
+    { "path": "/inbox", "title": "Messaggi" },
+    { "path": "/settings", "title": "Account" },
+    { "path": "/admin", "title": "Admin" },
+    { "path": "/community", "title": "Community" },
+    { "path": "/earnings", "title": "Guadagni" },
+    { "path": "/podcasts", "title": "Podcast" },
+    { "path": "/writing", "title": "Scrittura" },
+    { "path": "/rewards", "title": "VIP e Affiliazione" },
+    { "path": "/store", "title": "Store" },
+    { "path": "/radar", "title": "Radar della fiducia" }
+  ]
+}
